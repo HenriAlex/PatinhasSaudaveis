@@ -1,0 +1,327 @@
+# Importa a classe Conexao.
+# Essa classe é responsável por abrir a conexão
+# com o banco de dados SQLite.
+from database.conexao import Conexao
+
+# Importa a classe Usuario.
+# Essa classe representa o modelo da tabela usuario.
+from models.usuario import Usuario
+
+
+# Cria a classe responsável pelo acesso aos dados
+# da tabela usuario.
+class UsuarioRepository:
+
+    # ============================================================
+    # INSERIR
+    # ============================================================
+
+    # Método responsável por inserir um novo usuário
+    # no banco de dados.
+    #
+    # Recebe um objeto da classe Usuario.
+    def inserir(self, usuario: Usuario):
+
+        # Abre uma conexão com o banco.
+        conexao = Conexao.conectar()
+
+        # Cria um cursor para executar comandos SQL.
+        cursor = conexao.cursor()
+
+        # Executa o comando SQL de inserção.
+        cursor.execute("""
+            INSERT INTO usuario
+            (
+                nome,
+                id_perfil,
+                email,
+                senha,
+                cadastro
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+
+            # Envia o RA do usuário.
+            usuario.id_usuario,
+
+            # Envia o nome do usuário.
+            usuario.nome,
+
+            # Envia o ID do perfil.
+            usuario.id_perfil,
+
+            # Envia o e-mail.
+            usuario.email,
+
+            # Envia a senha.
+            usuario.senha,
+
+            # Envia a data de cadastro.
+            usuario.cadastro,
+        ))
+
+        # Obtém o id gerado pelo banco para o registro inserido.
+        last_id = cursor.lastrowid
+
+        # Confirma a inserção no banco.
+        conexao.commit()
+
+        # Fecha a conexão.
+        conexao.close()
+
+        # Retorna o id do novo registro.
+        return last_id
+
+
+    # ============================================================
+    # LISTAR
+    # ============================================================
+
+    # Método responsável por buscar todos os usuários
+    # cadastrados no banco.
+    def listar(self):
+
+        # Abre uma conexão com o banco.
+        conexao = Conexao.conectar()
+
+        # Cria um cursor.
+        cursor = conexao.cursor()
+
+        # Executa a consulta dos usuários.
+        #
+        # O INNER JOIN permite trazer também
+        # a descrição do perfil do usuário.
+        cursor.execute("""
+            SELECT
+                u.id_usuario,
+                u.nome,
+                u.id_perfil,
+                p.ds,
+                u.email,
+                u.senha,
+                u.cadastro
+            FROM usuario u
+            INNER JOIN perfil p
+                ON p.id_perfil = u.id_perfil
+            ORDER BY u.nome
+        """)
+
+        # Recupera todos os registros encontrados.
+        registros = cursor.fetchall()
+
+        # Fecha a conexão.
+        conexao.close()
+
+        # Converte os registros (tuplas) em uma lista de dicionários
+        usuarios = []
+        for registro in registros:
+            usuarios.append({
+                "id_usuario": registro[0],
+                "ra": registro[1],
+                "nome": registro[2],
+                "id_perfil": registro[3],
+                "ds_perfil": registro[4],
+                "email": registro[5],
+                "senha": registro[6],
+                "data_cadastro": registro[7]
+            })
+
+        return usuarios
+
+
+    # ============================================================
+    # BUSCAR POR ID
+    # ============================================================
+
+    # Método responsável por buscar um usuário
+    # utilizando o seu identificador.
+    def buscar_por_id(self, id_usuario):
+
+        # Abre uma conexão.
+        conexao = Conexao.conectar()
+
+        # Cria um cursor.
+        cursor = conexao.cursor()
+
+        # Busca o usuário pelo ID.
+        cursor.execute("""
+            SELECT
+                u.id_usuario,
+                u.nome,
+                u.id_perfil,
+                p.ds,
+                u.email,
+                u.senha,
+                u.cadastro
+            FROM usuario u
+            INNER JOIN perfil p
+                ON p.id_perfil = u.id_perfil
+            WHERE u.id_usuario = ?
+        """, (
+
+            # Envia o ID como parâmetro.
+            id_usuario,
+        ))
+
+        # Recupera o primeiro registro encontrado.
+        registro = cursor.fetchone()
+
+        # Fecha a conexão.
+        conexao.close()
+
+        # Se encontrou o registro, converte para dicionário.
+        if registro:
+            return {
+                "id_usuario": registro[0],
+                "ra": registro[1],
+                "nome": registro[2],
+                "id_perfil": registro[3],
+                "ds_perfil": registro[4],
+                "email": registro[5],
+                "senha": registro[6],
+                "data_cadastro": registro[7]
+            }
+
+        return None
+
+
+    # ============================================================
+    # BUSCAR POR E-MAIL
+    # ============================================================
+
+    # Método responsável por buscar um usuário
+    # utilizando o endereço de e-mail.
+    #
+    # Essa função será utilizada posteriormente
+    # no processo de login.
+    def buscar_por_email(self, email):
+
+        # Abre uma conexão com o banco.
+        conexao = Conexao.conectar()
+
+        # Cria um cursor.
+        cursor = conexao.cursor()
+
+        # Executa a consulta utilizando o e-mail.
+        cursor.execute("""
+            SELECT
+                u.id_usuario,
+                u.nome,
+                u.id_perfil,
+                p.ds,
+                u.email,
+                u.senha,
+                u.cadastro
+            FROM usuario u
+            INNER JOIN perfil p
+                ON p.id_perfil = u.id_perfil
+            WHERE u.email = ?
+        """, (
+
+            # Envia o e-mail como parâmetro.
+            email,
+        ))
+
+        # Recupera o usuário encontrado.
+        registro = cursor.fetchone()
+
+        # Fecha a conexão.
+        conexao.close()
+
+        # Se encontrou o registro, converte para dicionário.
+        if registro:
+            return {
+                "id_usuario": registro[0],
+                "ra": registro[1],
+                "nome": registro[2],
+                "id_perfil": registro[3],
+                "ds_perfil": registro[4],
+                "email": registro[5],
+                "senha": registro[6],
+                "data_cadastro": registro[7]
+            }
+
+        return None
+
+    # ============================================================
+    # ATUALIZAR
+    # ============================================================
+
+    # Método responsável por atualizar
+    # os dados de um usuário.
+    def atualizar(self, usuario: Usuario):
+
+        # Abre uma conexão.
+        conexao = Conexao.conectar()
+
+        # Cria um cursor.
+        cursor = conexao.cursor()
+
+        # Executa o comando UPDATE.
+        cursor.execute("""
+            UPDATE usuario
+            SET
+                nome = ?,
+                id_perfil = ?,
+                email = ?,
+                senha = ?,
+                cadastro = ?
+            WHERE id_usuario = ?
+        """, (
+
+
+            # Novo nome.
+            usuario.nome,
+
+            # Novo perfil.
+            usuario.id_perfil,
+
+            # Novo e-mail.
+            usuario.email,
+
+            # Nova senha.
+            usuario.senha,
+
+            # Nova data de cadastro.
+            usuario.cadastro,
+
+            # Identifica o usuário que será alterado.
+            usuario.id_usuario,
+        ))
+
+        # Confirma a alteração.
+        conexao.commit()
+
+        # Fecha a conexão.
+        conexao.close()
+
+
+    # ============================================================
+    # EXCLUIR
+    # ============================================================
+
+    # Método responsável por excluir um usuário
+    # do banco de dados.
+    def excluir(self, id_usuario):
+
+        # Abre uma conexão.
+        conexao = Conexao.conectar()
+
+        # Cria um cursor.
+        cursor = conexao.cursor()
+
+        # Executa o comando DELETE.
+        cursor.execute("""
+            DELETE FROM usuario
+            WHERE id_usuario = ?
+        """, (
+
+            # Informa qual usuário será excluído.
+            id_usuario,
+        ))
+
+        # Confirma a exclusão.
+        conexao.commit()
+
+        # Fecha a conexão.
+        conexao.close()
