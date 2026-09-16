@@ -46,10 +46,7 @@ function showScreen(screen) {
         if (typeof carregarPerfis === 'function') carregarPerfis();
     }
 }
-if (screen === 'telaUsuarios' || screen === 'telaUsuarioCadastro') {
-    if (typeof carregarUsuarios === 'function') carregarUsuarios();
-    if (screen === 'telaUsuarioCadastro' && typeof popularSelectPerfis === 'function') popularSelectPerfis();
-}
+
 
 
 // Cancela qualquer edição em andamento e navega para a tela informada

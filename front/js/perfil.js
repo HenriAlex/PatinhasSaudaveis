@@ -3,7 +3,7 @@
 */
 
 // Endereço base da API (ajuste se necessário)
-const API_BASE = 'http://127.0.0.1:8000/';
+const API_BASE = 'http://127.0.0.1:8000';
 
 // Lista os perfis e monta o grid com opção de remoção.
 async function carregarPerfis() {
@@ -100,9 +100,6 @@ async function carregarPerfis() {
 
 // Cadastra um novo perfil usando o formulário existente.
 async function cadastrarPerfil() {
-
-    alert("cheguei aqui...")
-
     const descricaoInput = document.getElementById('descricaoPerfil');
     const descricao = descricaoInput.value;
     if (descricao.trim() === '') {
@@ -115,7 +112,7 @@ async function cadastrarPerfil() {
         const dados = { ds_perfil: descricao };
         try {
             const resposta = await fetch(`${API_BASE}/perfis/${window.perfilEditId}`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dados)
             });
@@ -247,97 +244,4 @@ function editarPerfil(perfil){
     window.perfilEditId = perfil.id_perfil;
     showScreen('telaCadastro');
 }
-
-    const dados = { ds_perfil: descricao };
-
-    try {
-        const resposta = await fetch(`${API_BASE}/perfis/`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dados)
-        });
-
-        if (resposta.ok) {
-            const resultado = await resposta.json();
-            // Feedback ao usuário via toast
-            if (typeof showToast === 'function') showToast(resultado.mensagem || 'Perfil cadastrado.', 'success');
-            else alert(resultado.mensagem || 'Perfil cadastrado.');
-            descricaoInput.value = '';
-            // Atualiza a lista e mostra a tela de listagem
-            await carregarPerfis();
-            showScreen('telaLista');
-        } else {
-            let erro = { detail: 'Erro desconhecido' };
-            try { erro = await resposta.json(); } catch(e){}
-            alert(erro.detail || JSON.stringify(erro));
-        }
-        } catch (err) {
-        if (typeof showToast === 'function') showToast(err.message || 'Erro ao cadastrar perfil', 'error');
-        else alert(err.message || 'Erro ao cadastrar perfil');
-    }
-
-// Remove um perfil pelo id, com confirmação do usuário.
-async function removerPerfil(id_perfil) {
-    // Usa modal customizado de confirmação (melhor UX) e aguarda resposta.
-    const confirmado = await (typeof showModal === 'function' ? showModal('Confirmar remoção', 'Confirma a remoção deste perfil? Esta ação é irreversível.') : Promise.resolve(confirm('Confirma a remoção deste perfil? Esta ação é irreversível.')));
-    if (!confirmado) return;
-
-    try {
-        const resposta = await fetch(`${API_BASE}/perfis/${id_perfil}`, {
-            method: 'DELETE'
-        });
-
-        if (resposta.ok) {
-            const resultado = await resposta.json();
-            if (typeof showToast === 'function') showToast(resultado.mensagem || 'Perfil removido.', 'success');
-            else alert(resultado.mensagem || 'Perfil removido.');
-            // Atualiza a lista sem recarregar a página
-            await carregarPerfis();
-        } else {
-            let erro = { detail: 'Erro desconhecido' };
-            try { erro = await resposta.json(); } catch(e){}
-            if (typeof showToast === 'function') showToast(erro.detail || JSON.stringify(erro), 'error');
-            else alert(erro.detail || JSON.stringify(erro));
-        }
-    } catch (err) {
-        alert(err.message || 'Erro ao remover perfil');
-    }
-}
-
-
-// Filtra os perfis já renderizados no grid por texto (client-side)
-function filterProfiles(text){
-    const grid = document.getElementById('profilesGrid');
-    if (!grid) return;
-    const q = (text || '').toLowerCase().trim();
-    const cards = Array.from(grid.children);
-    let visible = 0;
-    cards.forEach(card => {
-        // pular nós não relacionados
-        if (!card.classList.contains('profile-card')) return;
-        const titleEl = card.querySelector('.profile-title');
-        const title = titleEl ? titleEl.textContent.toLowerCase() : '';
-        const match = title.includes(q);
-        card.style.display = match ? '' : 'none';
-        if (match) visible++;
-    });
-    const countEl = document.getElementById('profilesCount');
-    if (countEl) countEl.textContent = `${visible} perfis`;
-}
-
-
-// Atualiza o cartão de estatística exibido na tela de boas-vindas.
-function atualizarEstatistica(total){
-    const statEl = document.getElementById('statTotal');
-    if (statEl) statEl.textContent = total;
-}
-
-// Gera uma cor consistente (hash simples) a partir do texto, usada no avatar.
-function corPorTexto(texto){
-    const paleta = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4'];
-    let hash = 0;
-    for (let i = 0; i < (texto || '').length; i++) {
-        hash = texto.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return paleta[Math.abs(hash) % paleta.length];
-}
+// Fim do arquivo - todas as funções estão definidas acima.
