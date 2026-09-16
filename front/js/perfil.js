@@ -3,7 +3,7 @@
 */
 
 // Endereço base da API (ajuste se necessário)
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = 'http://127.0.0.1:8000/';
 
 // Lista os perfis e monta o grid com opção de remoção.
 async function carregarPerfis() {
@@ -100,6 +100,9 @@ async function carregarPerfis() {
 
 // Cadastra um novo perfil usando o formulário existente.
 async function cadastrarPerfil() {
+
+    alert("cheguei aqui...")
+
     const descricaoInput = document.getElementById('descricaoPerfil');
     const descricao = descricaoInput.value;
     if (descricao.trim() === '') {
@@ -112,7 +115,7 @@ async function cadastrarPerfil() {
         const dados = { ds_perfil: descricao };
         try {
             const resposta = await fetch(`${API_BASE}/perfis/${window.perfilEditId}`, {
-                method: 'PUT',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dados)
             });

@@ -12,8 +12,8 @@
   --text:#161821;
   --muted:#6b7280;
   --border:#e6e9f0;
-  --primary:#3b82f6;
-  --primary-dark:#2563eb;
+  --primary:#bb3aed;
+  --primary-dark:#e1bff7;
   --danger:#dc2626;
   --shadow:0 8px 24px rgba(16,24,40,.06);
   --radius:12px;
@@ -27,8 +27,8 @@ html.dark{
   --text:#eef0f7;
   --muted:#9aa0b4;
   --border:#262a3f;
-  --primary:#60a5fa;
-  --primary-dark:#3b82f6;
+  --primary:#bb3aed;
+  --primary-dark:#e1bff7;
   --shadow:0 8px 24px rgba(0,0,0,.4);
 }
 

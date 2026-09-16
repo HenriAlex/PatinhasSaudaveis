@@ -96,7 +96,7 @@ class UsuarioRepository:
                 u.id_usuario,
                 u.nome,
                 u.id_perfil,
-                p.ds,
+                p.ds_perfil,
                 u.email,
                 u.senha,
                 u.cadastro
@@ -117,7 +117,6 @@ class UsuarioRepository:
         for registro in registros:
             usuarios.append({
                 "id_usuario": registro[0],
-                "ra": registro[1],
                 "nome": registro[2],
                 "id_perfil": registro[3],
                 "ds_perfil": registro[4],
@@ -149,7 +148,7 @@ class UsuarioRepository:
                 u.id_usuario,
                 u.nome,
                 u.id_perfil,
-                p.ds,
+                p.ds_perfil,
                 u.email,
                 u.senha,
                 u.cadastro
@@ -173,7 +172,6 @@ class UsuarioRepository:
         if registro:
             return {
                 "id_usuario": registro[0],
-                "ra": registro[1],
                 "nome": registro[2],
                 "id_perfil": registro[3],
                 "ds_perfil": registro[4],
@@ -208,7 +206,7 @@ class UsuarioRepository:
                 u.id_usuario,
                 u.nome,
                 u.id_perfil,
-                p.ds,
+                p.ds_perfil,
                 u.email,
                 u.senha,
                 u.cadastro
@@ -232,7 +230,6 @@ class UsuarioRepository:
         if registro:
             return {
                 "id_usuario": registro[0],
-                "ra": registro[1],
                 "nome": registro[2],
                 "id_perfil": registro[3],
                 "ds_perfil": registro[4],

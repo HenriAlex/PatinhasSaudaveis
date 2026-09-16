@@ -86,7 +86,7 @@
                 <section class="card" id="telaCadastro" style="display:none;">
                     <h2>Cadastrar Perfil</h2>
                     <!-- Formulário simples com label associado ao input para acessibilidade -->
-                    <form id="formPerfil" onsubmit="event.preventDefault(); cadastrarPerfil();">
+                    <form id="formPerfil" onsubmit="event.preventDefault(); cadastrarPerfil(); return false">
                         <label for="descricaoPerfil">Descrição do Perfil</label>
                         <input type="text" id="descricaoPerfil" placeholder="Ex: Adm, Dono pet, veterinário" aria-label="Descrição do perfil">
                         <div class="form-actions">
